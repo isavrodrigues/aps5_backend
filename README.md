@@ -5,11 +5,11 @@
 Apenas um precisa entregar, porém os dois precisam ter commits no repositório.
 Adicione o nome dos integrantes aqui no README.md.
 
-Integrante 1:
+Integrante 1: Isabela Vieira Rodrigues
 
-Integrante 2:
+Integrante 2: Ana Beatriz da Cunha
 
-Integrante 3:
+Integrante 3: Manoela Saragoça
 
 ## Aluguel de Bicicletas Compartilhadas com Histórico de Empréstimos
 
