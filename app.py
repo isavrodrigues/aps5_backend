@@ -178,4 +178,57 @@ def delete_bike(id_bike):
     else:
         return {'erro': 'Bicicleta não encontrada'}, 404
 
+##EMPRESTIMOS
+@app.route("/emprestimos/usuarios/<id_usuario>/bicicletas/<id_bike>", methods=['POST'])
+def post_loan(id_usuario, id_bike):
+    # Verificar se a bicicleta está disponível
+    bike = mongo.db.bicicletas.find_one({"_id": ObjectId(id_bike)})
+    if not bike:
+        return {'erro': 'Bicicleta não encontrada'}, 404
 
+    if bike['status'] == 'em uso':
+        return {'erro': 'Bicicleta já está alugada'}, 400
+
+    # Registrar empréstimo
+    emprestimo = {
+        'id_usuario': id_usuario,
+        'id_bicicleta': id_bike,
+        'data_emprestimo': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    }
+
+    mongo.db.emprestimos.insert_one(emprestimo)
+
+    # Atualizar status da bicicleta para em uso
+    mongo.db.bicicletas.update_one({"_id": ObjectId(id_bike)}, {"$set": {"status": "em uso"}})
+
+    return {'mensagem': 'Empréstimo registrado com sucesso'}, 201
+
+@app.route("/emprestimos", methods=['GET'])
+def get_all_loans():
+    emprestimos = mongo.db.emprestimos.find()
+    output = []
+    for emprestimo in emprestimos:
+        output.append({
+            'id_usuario': str(emprestimo['id_usuario']),
+            'id_bicicleta': str(emprestimo['id_bicicleta']),
+            'id_emprestimo': str(emprestimo['_id'])
+        })
+    return {'emprestimos': output}
+
+@app.route("/emprestimos/<id_emprestimo>", methods=['DELETE'])
+def delete_loan(id_emprestimo):
+    emprestimo = mongo.db.emprestimos.find_one({"_id": ObjectId(id_emprestimo)})
+    if not emprestimo:
+        return {'erro': 'Empréstimo não encontrado'}, 404
+
+    # Atualizar status da bicicleta para disponível
+    mongo.db.bicicletas.update_one({"_id": ObjectId(emprestimo['id_bicicleta'])}, {"$set": {"status": "disponivel"}})
+
+    # Excluir empréstimo
+    mongo.db.emprestimos.delete_one({"_id": ObjectId(id_emprestimo)})
+
+    return {'mensagem': 'Empréstimo deletado com sucesso'}, 200
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
