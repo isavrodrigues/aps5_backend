@@ -12,6 +12,10 @@ app.config["MONGO_URI"] = str_de_conexao_mongo
 
 mongo = PyMongo(app)
 
+@app.route("/")
+def home():
+    return "API ProgEficaz"
+
 ##USUARIOS 
 @app.route("/usuarios", methods=['POST'])
 def post_users():
