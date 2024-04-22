@@ -95,4 +95,87 @@ def delete_user(id_usuario):
         return {'erro': 'Usuário não encontrado'} , 404
     
 
+##BICICLETAS
+@app.route("/bicicletas", methods=['POST'])
+def post_bike():
+    data = request.json
+
+    if "marca" not in data or "modelo" not in data or "cidade" not in data or "status" not in data:
+        return {'erro': "todas as informações são obrigatórias"}, 400
+
+    if data['status'] not in ['disponivel', 'em uso']:
+        return {'erro': "status da bicicleta deve ser 'disponivel' ou 'em uso'"},  400
+
+    bike = {
+        'marca': data['marca'],
+        'modelo': data['modelo'],
+        'cidade': data['cidade'],
+        'status': data['status']
+    }
+
+    result = mongo.db.bicicletas.insert_one(bike)
+
+    return {"id": str(result.inserted_id)}, 201
+
+@app.route("/bicicletas", methods=['GET'])
+def get_all_bikes():
+    bikes = mongo.db.bicicletas.find()
+
+    output = []
+    for bike in bikes:
+        output.append({
+            'id': str(bike['_id']),
+            'marca': bike['marca'],
+            'modelo': bike['modelo'],
+            'cidade': bike['cidade'],
+            'status': bike['status']
+        })
+
+    return {'bicicletas': output}, 200
+
+@app.route("/bicicletas/<id_bike>", methods=['GET'])
+def get_bike(id_bike):
+    bike = mongo.db.bicicletas.find_one({"_id": ObjectId(id_bike)})
+    if bike:
+        return {
+            'id': str(bike['_id']),
+            'marca': bike['marca'],
+            'modelo': bike['modelo'],
+            'cidade': bike['cidade'],
+            'status': bike['status']
+        }
+    else:
+        return {'erro': 'Bicicleta não encontrada'}, 404
+    
+@app.route("/bicicletas/<id_bike>", methods=['PUT'])
+def update_bike(id_bike):
+    data = request.json
+
+    if not data:
+        return {'erro': "dados de atualização não fornecidos"}, 400
+
+    # Verificar se a bicicleta existe
+    bike = mongo.db.bicicletas.find_one({"_id": ObjectId(id_bike)})
+    if not bike:
+        return {'erro': 'Bicicleta não encontrada'}, 404
+
+    for key in data:
+        if key not in ['marca', 'modelo', 'cidade', 'status']:
+            return {'erro': f'Campo {key} não pode ser atualizado'}, 400
+
+    if 'status' in data and data['status'] not in ['disponivel', 'em uso']:
+        return {'erro': "status da bicicleta deve ser 'disponivel' ou 'em uso'"}, 400
+
+    mongo.db.bicicletas.update_one({"_id": ObjectId(id_bike)}, {"$set": data})
+
+    return {'mensagem': 'Bicicleta atualizada com sucesso'}, 200
+
+@app.route("/bicicletas/<id_bike>", methods=['DELETE'])
+def delete_bike(id_bike):
+    result = mongo.db.bicicletas.delete_one({"_id": ObjectId(id_bike)})
+    if result.deleted_count == 1:
+        return {'mensagem': 'Bicicleta deletada com sucesso'}, 200
+    else:
+        return {'erro': 'Bicicleta não encontrada'}, 404
+
 
