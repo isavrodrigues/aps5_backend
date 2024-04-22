@@ -1,6 +1,8 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/VLn-owAj)
 # Web Service REST com MongoDB BACKEND
-
+##Observação
+Fizemos deploy no render, colocamos a string de conexão direto no código e não na variável de ambiente.
+Link do deploy: https://aps5-backend.onrender.com/
 ## ESTA É UMA APS EM DUPLA, ou TRIO! Não pode ser individual.
 Apenas um precisa entregar, porém os dois precisam ter commits no repositório.
 Adicione o nome dos integrantes aqui no README.md.
@@ -119,6 +121,7 @@ Desenvolva o web service em Flask, garantindo que os requisitos definidos no enu
 ### 4.2: Deploy no Heroku 
 
 Faça o deploy do seu web service no Heroku e assegure que ele esteja se comunicando corretamente com o MongoDB Atlas.
+
 
 ## Etapa 5: Interface do Usuário
 
