@@ -7,7 +7,7 @@ from datetime import datetime
 app = Flask(__name__)
 
 str_de_conexao_mongo = os.getenv("progeficaz")
-app.config["MONGO_URI"] = str_de_conexao_mongo
+app.config["MONGO_URI"] = "mongodb+srv://admin:admin@cluster0.hmjqwho.mongodb.net/biblioteca_db"
 
 
 mongo = PyMongo(app)
